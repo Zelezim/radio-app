@@ -1,5 +1,13 @@
 # RadioApp
 
+[![CI](https://github.com/Zelezim/radio-app/actions/workflows/ci.yml/badge.svg)](https://github.com/Zelezim/radio-app/actions/workflows/ci.yml)
+![Go](https://img.shields.io/badge/Go-1.22-00ADD8?logo=go&logoColor=white)
+![Echo](https://img.shields.io/badge/Echo-v4-00ADD8)
+![HTMX](https://img.shields.io/badge/HTMX-1.9-3366CC?logo=htmx&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20Auth-3FCF8E?logo=supabase&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?logo=docker&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 Live-radio player with a lightweight CRM, built in **Go + Echo + HTMX**, backed by **Supabase** (PostgreSQL + Auth).
 
 - 🎧 Mobile-first live audio player (in-car friendly).
