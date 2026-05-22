@@ -1,0 +1,27 @@
+{{define "content"}}
+<section class="auth-card">
+  <h1>Create your account</h1>
+  <p class="muted">Free, no credit card.</p>
+
+  {{if .Error}}<div class="alert error">{{.Error}}</div>{{end}}
+  {{if .Success}}<div class="alert success">{{.Success}}</div>{{end}}
+
+  <form method="post" action="/register" class="stack">
+    <label>
+      <span>Full name</span>
+      <input type="text" name="full_name" autocomplete="name">
+    </label>
+    <label>
+      <span>Email</span>
+      <input type="email" name="email" required autocomplete="email">
+    </label>
+    <label>
+      <span>Password (6+ chars)</span>
+      <input type="password" name="password" minlength="6" required autocomplete="new-password">
+    </label>
+    <button type="submit" class="btn-primary">Sign up</button>
+  </form>
+
+  <p class="muted">Already have an account? <a href="/login">Sign in</a>.</p>
+</section>
+{{end}}

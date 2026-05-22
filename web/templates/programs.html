@@ -1,0 +1,67 @@
+{{define "content"}}
+<header class="page-head">
+  <h1>Programs</h1>
+  <p class="muted">Browse the schedule, vote the shows you love, and rate them 1 to 5.</p>
+</header>
+
+{{if not .Session}}
+  <div class="alert info">
+    <a href="/login">Log in</a> to vote and rate programs.
+  </div>
+{{end}}
+
+<div class="cards">
+  {{range .Programs}}
+  <article class="card">
+    {{if .ImageURL}}<img class="card-img" src="{{.ImageURL}}" alt="" loading="lazy">{{end}}
+    <div class="card-body">
+      <h2>{{.Title}}</h2>
+      <p class="schedule">🕒 {{.Schedule}}</p>
+      <p class="desc">{{.Description}}</p>
+
+      <div class="card-actions">
+        <!-- Votes -->
+        <div class="vote-block">
+          {{if $.Session}}
+            <button class="vote up"
+              hx-post="/vote"
+              hx-vals='{"content_id":"{{.ID}}","content_type":"program","value":"1"}'
+              hx-target="#vote-{{.ID}}"
+              hx-swap="outerHTML">👍</button>
+            <button class="vote down"
+              hx-post="/vote"
+              hx-vals='{"content_id":"{{.ID}}","content_type":"program","value":"-1"}'
+              hx-target="#vote-{{.ID}}"
+              hx-swap="outerHTML">👎</button>
+          {{end}}
+          <span id="vote-{{.ID}}" class="vote-tally" data-up="{{.UpVotes}}" data-down="{{.DownVotes}}">
+            👍 {{.UpVotes}} · 👎 {{.DownVotes}}
+          </span>
+        </div>
+
+        <!-- Ratings -->
+        <div class="rating-block">
+          {{if $.Session}}
+            <div class="stars" role="radiogroup" aria-label="Rate {{.Title}}">
+              {{range $s := seq 5}}
+                <button class="star"
+                  aria-label="{{$s}} stars"
+                  hx-post="/rate"
+                  hx-vals='{"program_id":"{{$.ID}}","score":"{{$s}}"}'
+                  hx-target="#avg-{{$.ID}}"
+                  hx-swap="outerHTML">★</button>
+              {{end}}
+            </div>
+          {{end}}
+          <span id="avg-{{.ID}}" class="rating-avg" data-avg="{{.AvgRating}}">
+            ★ {{printf "%.1f" .AvgRating}} <small>({{.RatingCount}})</small>
+          </span>
+        </div>
+      </div>
+    </div>
+  </article>
+  {{else}}
+    <p class="muted">No programs yet.</p>
+  {{end}}
+</div>
+{{end}}

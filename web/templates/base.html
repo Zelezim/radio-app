@@ -1,0 +1,125 @@
+{{define "base"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b10">
+  <title>{{.Title}} · RadioApp</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+</head>
+<!-- hx-boost: every <a> click and same-origin form submission becomes an
+     AJAX request that swaps ONLY the <main> tag, keeping the bottom dock
+     (and the playing <audio> element) mounted across navigations. -->
+<body hx-boost="true"
+      hx-target="main"
+      hx-select="main"
+      hx-swap="outerHTML show:window:top">
+
+  <header class="topbar">
+    <a href="/" class="brand">
+      <span class="logo-dot"></span>
+      <span class="brand-text">RadioApp</span>
+    </a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/programs">Programs</a>
+      {{if .Session}}
+        <span class="who">{{.Session.Email}}</span>
+        <form method="post" action="/logout" class="inline">
+          <button class="link" type="submit">Logout</button>
+        </form>
+      {{else}}
+        <a href="/login">Login</a>
+      {{end}}
+    </nav>
+  </header>
+
+  <main class="container">
+    {{template "content" .}}
+  </main>
+
+  <footer class="footer">
+    <small>© RadioApp — streaming from {{.StationName}}</small>
+  </footer>
+
+  <!-- ============================================================
+       Persistent player + contact dock. Never re-rendered by HTMX.
+       ============================================================ -->
+  <aside class="dock" id="dock" data-expanded="false">
+
+    <!-- Slide-up panel (revealed when the contact button is toggled) -->
+    <div class="dock-panel" id="dockPanel" aria-hidden="true">
+      <header class="dock-panel-head">
+        <h2>Get in touch</h2>
+        <button class="dock-close" id="dockClose" aria-label="Close">✕</button>
+      </header>
+
+      <form id="contactForm"
+            hx-post="/contact"
+            hx-target="#contactResult"
+            hx-swap="innerHTML"
+            hx-on::after-request="if(event.detail.successful){this.reset();}"
+            class="dock-form">
+        <div class="row two">
+          <input type="text"  name="name"  placeholder="Name *"  required autocomplete="name">
+          <input type="email" name="email" placeholder="Email *" required autocomplete="email">
+        </div>
+        <div class="row two">
+          <input type="tel"  name="phone"   placeholder="Phone"   autocomplete="tel">
+          <input type="text" name="address" placeholder="Address" autocomplete="street-address">
+        </div>
+
+        <fieldset class="request-type">
+          <legend>I'd like to request:</legend>
+          <label class="chip"><input type="checkbox" name="request_type" value="visit">  Visit</label>
+          <label class="chip"><input type="checkbox" name="request_type" value="cd_dvd"> CD / DVD</label>
+          <label class="chip"><input type="checkbox" name="request_type" value="book">   Book</label>
+          <label class="chip"><input type="checkbox" name="request_type" value="other">  Other</label>
+        </fieldset>
+
+        <textarea name="message" rows="3" placeholder="Tell us what you need…"></textarea>
+
+        <div class="dock-form-actions">
+          <div id="contactResult" class="form-result" aria-live="polite"></div>
+          <button class="btn-primary" type="submit">Send</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Mini bar (always visible) -->
+    <div class="dock-bar">
+      <button id="playBtn" class="dock-play" type="button" aria-label="Play / pause">
+        <span class="play-icon">▶</span>
+        <span class="pause-icon">❚❚</span>
+      </button>
+
+      <div class="dock-info">
+        <div class="dock-title">{{.StationName}}</div>
+        <div class="dock-status">
+          <span class="live-dot"></span>
+          <span id="status">Idle</span>
+        </div>
+      </div>
+
+      <div class="dock-vol" aria-label="Volume">
+        <span aria-hidden="true">🔊</span>
+        <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8">
+      </div>
+
+      <button class="dock-toggle"
+              id="dockToggle"
+              type="button"
+              aria-controls="dockPanel"
+              aria-expanded="false"
+              title="Contact / requests">
+        📬
+      </button>
+    </div>
+
+    <audio id="radio" preload="none" src="{{.StreamURL}}"></audio>
+  </aside>
+
+  <script src="/static/player.js" defer></script>
+</body>
+</html>{{end}}

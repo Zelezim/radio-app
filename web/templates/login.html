@@ -1,0 +1,22 @@
+{{define "content"}}
+<section class="auth-card">
+  <h1>Welcome back</h1>
+  <p class="muted">Sign in to vote and rate the shows.</p>
+
+  {{if .Error}}<div class="alert error">{{.Error}}</div>{{end}}
+
+  <form method="post" action="/login" class="stack">
+    <label>
+      <span>Email</span>
+      <input type="email" name="email" required autocomplete="email">
+    </label>
+    <label>
+      <span>Password</span>
+      <input type="password" name="password" required autocomplete="current-password">
+    </label>
+    <button type="submit" class="btn-primary">Sign in</button>
+  </form>
+
+  <p class="muted">No account? <a href="/register">Create one</a>.</p>
+</section>
+{{end}}

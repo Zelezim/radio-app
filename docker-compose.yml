@@ -1,0 +1,13 @@
+services:
+  radioapp:
+    build: .
+    image: radioapp:latest
+    container_name: radioapp
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    # Hot edits to templates / static assets without rebuilding the binary.
+    volumes:
+      - ./web:/app/web:ro
