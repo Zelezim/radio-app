@@ -110,7 +110,7 @@ func main() {
 		SB:            sb,
 		SessionSecret: []byte(sessionSecret),
 		StreamURL:     streamURL,
-		StationName:   "Triple J – Live from Australia",
+		StationName:   "Faith FM Australia",
 	}
 
 	e := echo.New()

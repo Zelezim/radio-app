@@ -93,15 +93,20 @@ create policy "programs are readable by everyone"
   on programs for select using (true);
 
 -- Seed a few programs so the UI has something to render on first boot.
+-- (Placeholder Faith-FM-style content; replace with the real Faith FM
+--  schedule once you have it.)
 insert into programs (title, description, schedule, image_url)
 values
-  ('Morning Drive', 'Wake up with the best mix of indie and rock.',
+  ('Morning Devotion',
+   'Start your day with Scripture readings and uplifting worship music.',
    'Mon-Fri 06:00-09:00',
-   'https://images.unsplash.com/photo-1485579149621-3123dd979885?w=600'),
-  ('Lunchtime Lounge', 'Chillout beats while you eat.',
+   'https://images.unsplash.com/photo-1507692049790-de58290a4334?w=600'),
+  ('Family Hour',
+   'Stories, music and chat for the whole family — kid-friendly and fun.',
    'Mon-Fri 12:00-13:00',
-   'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600'),
-  ('After Dark', 'Late night electronic sessions.',
-   'Daily 22:00-00:00',
-   'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600')
+   'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600'),
+  ('Sunday Service',
+   'Live worship and sermons from Australian churches.',
+   'Sun 09:00-11:00',
+   'https://images.unsplash.com/photo-1438032005730-c779502df39b?w=600')
 on conflict do nothing;
