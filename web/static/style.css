@@ -45,6 +45,26 @@ body {
 a { color: var(--accent-2); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+/* --- HTMX progress bar --------------------------------------------- */
+.hx-progress {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent) 50%, transparent 100%);
+  background-size: 200% 100%;
+  opacity: 0;
+  transition: opacity .2s ease;
+  z-index: 9999;
+  pointer-events: none;
+}
+.hx-progress.htmx-request {
+  opacity: 1;
+  animation: hx-shimmer 1.1s ease-in-out infinite;
+}
+@keyframes hx-shimmer {
+  0%   { background-position:  100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 /* --- Top bar -------------------------------------------------------- */
 .topbar {
   display: flex; align-items: center; justify-content: space-between;

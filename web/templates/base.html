@@ -14,7 +14,13 @@
 <body hx-boost="true"
       hx-target="main"
       hx-select="main"
-      hx-swap="outerHTML show:window:top">
+      hx-swap="outerHTML show:window:top"
+      hx-indicator="#hxProgress">
+
+  <!-- Slim top progress bar — fades in during any HTMX boost request,
+       so slow page transitions (e.g. /programs cold-starting on Render)
+       don't look like a frozen UI. -->
+  <div id="hxProgress" class="hx-progress" aria-hidden="true"></div>
 
   <header class="topbar">
     <a href="/" class="brand">
