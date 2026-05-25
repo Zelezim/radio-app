@@ -1,0 +1,73 @@
+{{define "content"}}
+<header class="me-head">
+  <div>
+    <h1>My account</h1>
+    <p class="muted">Signed in as <strong>{{.Session.Email}}</strong></p>
+  </div>
+  <form method="post" action="/logout" class="inline">
+    <button class="btn-primary" type="submit">Sign out</button>
+  </form>
+</header>
+
+<section class="activity">
+  <h2>⭐ My ratings <small class="muted">({{len .Ratings}})</small></h2>
+  {{if .Ratings}}
+    <ul class="activity-list">
+    {{range .Ratings}}
+      <li class="activity-row">
+        {{if .Programs.ImageURL}}<img class="activity-thumb" src="{{.Programs.ImageURL}}" alt="" loading="lazy">{{end}}
+        <div class="activity-body">
+          <div class="activity-title">{{.Programs.Title}}</div>
+          <div class="activity-meta muted">{{slice .CreatedAt 0 10}}</div>
+        </div>
+        <div class="activity-score">★ {{.Score}}</div>
+      </li>
+    {{end}}
+    </ul>
+  {{else}}
+    <p class="muted">No ratings yet — go to <a href="/programs">Programs</a> and tap the stars.</p>
+  {{end}}
+</section>
+
+<section class="activity">
+  <h2>👍 My votes <small class="muted">({{len .Votes}})</small></h2>
+  {{if .Votes}}
+    <ul class="activity-list">
+    {{range .Votes}}
+      <li class="activity-row">
+        {{if .ProgramImage}}<img class="activity-thumb" src="{{.ProgramImage}}" alt="" loading="lazy">{{end}}
+        <div class="activity-body">
+          <div class="activity-title">{{if .ProgramTitle}}{{.ProgramTitle}}{{else}}<span class="muted">(deleted program)</span>{{end}}</div>
+          <div class="activity-meta muted">{{slice .CreatedAt 0 10}}</div>
+        </div>
+        <div class="activity-score">
+          {{if eq .Value 1}}<span class="vote-up">👍</span>{{else}}<span class="vote-down">👎</span>{{end}}
+        </div>
+      </li>
+    {{end}}
+    </ul>
+  {{else}}
+    <p class="muted">No votes yet — give a program a 👍 or 👎 in <a href="/programs">Programs</a>.</p>
+  {{end}}
+</section>
+
+<section class="activity">
+  <h2>📬 My messages <small class="muted">({{len .Messages}})</small></h2>
+  {{if .Messages}}
+    <ul class="message-list">
+    {{range .Messages}}
+      <li class="message-row">
+        <header class="message-head">
+          <span class="message-date">{{slice .CreatedAt 0 10}}</span>
+          {{if .RequestType}}<span class="chip-tag">{{.RequestType}}</span>{{end}}
+          <span class="status-pill status-{{.Status}}">{{.Status}}</span>
+        </header>
+        {{if .Message}}<p class="message-body">{{.Message}}</p>{{end}}
+      </li>
+    {{end}}
+    </ul>
+  {{else}}
+    <p class="muted">No messages yet — open the contact form in the bottom dock (📬) to send one.</p>
+  {{end}}
+</section>
+{{end}}

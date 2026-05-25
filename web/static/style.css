@@ -436,3 +436,99 @@ textarea { resize: vertical; min-height: 80px; }
   .dock-play { width: 48px; height: 48px; }
   .dock-form .row.two { grid-template-columns: 1fr; }
 }
+
+/* =====================================================================
+   /me account page
+   ===================================================================== */
+.me-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin: 8px 0 28px;
+  flex-wrap: wrap;
+}
+.me-head h1 { margin: 0 0 4px; }
+
+.activity { margin-bottom: 32px; }
+.activity > h2 {
+  font-size: 1.05rem;
+  margin: 0 0 12px;
+  color: var(--text);
+  font-weight: 600;
+  display: flex; align-items: baseline; gap: 8px;
+}
+.activity > h2 small { font-weight: 400; font-size: .85rem; }
+
+.activity-list, .message-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid; gap: 8px;
+}
+.activity-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.activity-thumb {
+  width: 56px; height: 56px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--bg-elev2);
+}
+.activity-body { min-width: 0; }
+.activity-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.activity-meta { font-size: .8rem; }
+.activity-score {
+  font-weight: 700;
+  color: var(--accent-2);
+  white-space: nowrap;
+}
+.activity-score .vote-up   { color: var(--good); font-size: 1.2rem; }
+.activity-score .vote-down { color: var(--bad);  font-size: 1.2rem; }
+
+.message-row {
+  padding: 12px 14px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.message-head {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.message-date { color: var(--muted); font-size: .82rem; }
+.chip-tag {
+  font-size: .72rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,209,102,.12);
+  color: var(--accent-2);
+  border: 1px solid rgba(255,209,102,.35);
+}
+.status-pill {
+  font-size: .7rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  border: 1px solid var(--border);
+}
+.status-new         { background: rgba(255,59,92,.10);  color: var(--accent);   border-color: rgba(255,59,92,.35); }
+.status-in_progress { background: rgba(255,209,102,.10); color: var(--accent-2); border-color: rgba(255,209,102,.35); }
+.status-done        { background: rgba(74,222,128,.10);  color: var(--good);    border-color: rgba(74,222,128,.35); }
+.message-body {
+  margin: 0;
+  color: var(--text);
+  white-space: pre-wrap;
+}

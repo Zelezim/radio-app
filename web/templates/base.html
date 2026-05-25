@@ -31,10 +31,7 @@
       <a href="/">Home</a>
       <a href="/programs">Programs</a>
       {{if .Session}}
-        <span class="who">{{.Session.Email}}</span>
-        <form method="post" action="/logout" class="inline">
-          <button class="link" type="submit">Logout</button>
-        </form>
+        <a href="/me" class="who" title="My account">👤 {{.Session.Email}}</a>
       {{else}}
         <a href="/login">Login</a>
       {{end}}

@@ -74,6 +74,30 @@ type ProgramRatingAvg struct {
 	RatingCount int     `json:"rating_count"`
 }
 
+// MyRating is one row from /ratings with the embedded program join
+// (PostgREST resolves `programs(...)` via the existing FK constraint).
+type MyRating struct {
+	Score     int    `json:"score"`
+	CreatedAt string `json:"created_at"`
+	Programs  struct {
+		ID       string `json:"id"`
+		Title    string `json:"title"`
+		ImageURL string `json:"image_url"`
+	} `json:"programs"`
+}
+
+// MyVote is a vote row enriched with the program's title/image — votes
+// have no FK to programs (content can also be 'music'), so the title is
+// resolved by a separate query and stitched in the handler.
+type MyVote struct {
+	Value        int    `json:"value"`
+	ContentID    string `json:"content_id"`
+	ContentType  string `json:"content_type"`
+	CreatedAt    string `json:"created_at"`
+	ProgramTitle string `json:"-"`
+	ProgramImage string `json:"-"`
+}
+
 // Session is the value we sign and store in the user's cookie.
 type Session struct {
 	UserID      string `json:"uid"`

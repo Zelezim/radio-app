@@ -140,8 +140,9 @@ func main() {
 	// Health probe for compose / k8s.
 	e.GET("/healthz", func(c echo.Context) error { return c.String(http.StatusOK, "ok") })
 
-	// Protected routes (HTMX endpoints).
+	// Protected routes.
 	auth := e.Group("", h.RequireAuth)
+	auth.GET("/me", h.MePage)
 	auth.POST("/vote", h.CastVote)
 	auth.POST("/rate", h.RateProgram)
 
