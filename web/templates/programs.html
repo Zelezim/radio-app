@@ -42,13 +42,18 @@
         <!-- Ratings -->
         <div class="rating-block">
           {{if $.Session}}
+            {{/* Capture the current program before the inner range
+                 (inside it, "." rebinds to the loop variable and "$"
+                 points to the page-level data, neither of which has
+                 the program ID we want to post). */}}
+            {{$progID := .ID}}
             <div class="stars" role="radiogroup" aria-label="Rate {{.Title}}">
               {{range $s := seq 5}}
                 <button class="star"
                   aria-label="{{$s}} stars"
                   hx-post="/rate"
-                  hx-vals='{"program_id":"{{$.ID}}","score":"{{$s}}"}'
-                  hx-target="#avg-{{$.ID}}"
+                  hx-vals='{"program_id":"{{$progID}}","score":"{{$s}}"}'
+                  hx-target="#avg-{{$progID}}"
                   hx-swap="outerHTML">★</button>
               {{end}}
             </div>
