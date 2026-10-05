@@ -36,14 +36,27 @@
   }
 
   // --- Play / pause ---------------------------------------------------
+  //
+  // Design note: we DO NOT call audio.load() before play(). For live
+  // Icecast streams served with Transfer-Encoding: chunked, forcing a
+  // reload resets the pipeline and can trap Chrome in a loop where it
+  // fires `waiting`, then `pause`, then never reconnects — exactly the
+  // "tries to buffer then pauses" symptom. Just calling play() lets the
+  // browser's media stack reuse any existing connection or open a fresh
+  // one as needed. If the user is coming back after a long pause, the
+  // browser handles the stale buffer internally.
+
+  let bufferTimer = null;
+  const clearBufferTimer = () => {
+    if (bufferTimer) { clearTimeout(bufferTimer); bufferTimer = null; }
+  };
+
   playBtn.addEventListener("click", () => {
     if (audio.paused) {
-      // Reset the buffer so a long-paused user doesn't hear stale audio.
-      audio.load();
+      setStatus("Connecting…", false);
       const p = audio.play();
       if (p && typeof p.then === "function") {
-        setStatus("Connecting…", false);
-        p.then(() => setStatus("Live", true)).catch((err) => {
+        p.catch((err) => {
           console.error("playback failed:", err);
           setStatus("Tap play to retry.", false);
         });
@@ -54,15 +67,33 @@
   });
 
   audio.addEventListener("playing", () => {
+    clearBufferTimer();
     playBtn.classList.add("is-playing");
     setStatus("Live", true);
   });
   audio.addEventListener("pause", () => {
+    clearBufferTimer();
     playBtn.classList.remove("is-playing");
     setStatus("Paused", false);
   });
-  audio.addEventListener("waiting", () => setStatus("Buffering…", false));
-  audio.addEventListener("error", () => setStatus("Stream error. Tap play to retry.", false));
+  audio.addEventListener("waiting", () => {
+    setStatus("Buffering…", false);
+    // If buffering drags on past 8 seconds, surface a hint instead of
+    // leaving the user staring at a frozen "Buffering…" label.
+    clearBufferTimer();
+    bufferTimer = setTimeout(() => {
+      if (audio.readyState < 3) {
+        setStatus("Stream slow — tap play to retry.", false);
+      }
+    }, 8000);
+  });
+  audio.addEventListener("error", () => {
+    clearBufferTimer();
+    const err = audio.error;
+    console.error("audio error", err && err.code, err && err.message);
+    setStatus("Stream error. Tap play to retry.", false);
+  });
+  audio.addEventListener("stalled", () => console.warn("audio stalled"));
 
   // --- Contact dock toggle -------------------------------------------
   function setDockOpen(open) {

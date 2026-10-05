@@ -107,10 +107,11 @@ func main() {
 
 	sb := supabase.New(supabaseURL, anonKey, secretKey)
 	h := &handlers.Handlers{
-		SB:            sb,
-		SessionSecret: []byte(sessionSecret),
-		StreamURL:     streamURL,
-		StationName:   "Faith FM Australia",
+		SB:                sb,
+		SessionSecret:     []byte(sessionSecret),
+		StreamURL:         streamURL,
+		StreamURLFallback: os.Getenv("STREAM_URL_FALLBACK"), // optional
+		StationName:       "Faith FM Australia",
 	}
 
 	e := echo.New()

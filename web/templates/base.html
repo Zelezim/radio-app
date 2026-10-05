@@ -120,7 +120,13 @@
       </button>
     </div>
 
-    <audio id="radio" preload="none" src="{{.StreamURL}}"></audio>
+    <!-- Multiple <source> children let the browser automatically fall back
+         to the OGG mirror if the MP3 one stalls (handy because Chrome can
+         occasionally choke on chunked-encoded Icecast MP3 streams). -->
+    <audio id="radio" preload="none">
+      <source src="{{.StreamURL}}" type="audio/mpeg">
+      {{if .StreamURLFallback}}<source src="{{.StreamURLFallback}}" type="audio/ogg">{{end}}
+    </audio>
   </aside>
 
   <script src="/static/player.js" defer></script>

@@ -20,10 +20,11 @@ import (
 
 // Handlers bundles the dependencies every handler needs.
 type Handlers struct {
-	SB            *supabase.Client
-	SessionSecret []byte
-	StreamURL     string
-	StationName  string
+	SB                *supabase.Client
+	SessionSecret     []byte
+	StreamURL         string
+	StreamURLFallback string // optional alternate format for <audio> source fallback
+	StationName       string
 }
 
 const sessionCookieName = "rb_session"
@@ -137,18 +138,20 @@ func (h *Handlers) RequireAuth(next echo.HandlerFunc) echo.HandlerFunc {
 // baseData is the common payload every page template receives. Handlers may
 // embed it into a larger struct via composition.
 type baseData struct {
-	Session     *models.Session
-	StreamURL   string
-	StationName string
-	Title       string
-	Flash       string
+	Session           *models.Session
+	StreamURL         string
+	StreamURLFallback string
+	StationName       string
+	Title             string
+	Flash             string
 }
 
 func (h *Handlers) base(c echo.Context, title string) baseData {
 	return baseData{
-		Session:     h.CurrentSession(c),
-		StreamURL:   h.StreamURL,
-		StationName: h.StationName,
-		Title:       title,
+		Session:           h.CurrentSession(c),
+		StreamURL:         h.StreamURL,
+		StreamURLFallback: h.StreamURLFallback,
+		StationName:       h.StationName,
+		Title:             title,
 	}
 }
