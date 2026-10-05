@@ -141,6 +141,12 @@ func main() {
 	// Health probe for compose / k8s.
 	e.GET("/healthz", func(c echo.Context) error { return c.String(http.StatusOK, "ok") })
 
+	// Same-origin stream proxy — the <audio> element points here so the
+	// browser never has to open a long-haul chunked TLS connection to
+	// Icecast in Australia on its own.
+	e.GET("/stream.mp3", h.ProxyStream)
+	e.GET("/stream.ogg", h.ProxyStream)
+
 	// Protected routes.
 	auth := e.Group("", h.RequireAuth)
 	auth.GET("/me", h.MePage)

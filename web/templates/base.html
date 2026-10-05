@@ -120,12 +120,13 @@
       </button>
     </div>
 
-    <!-- Multiple <source> children let the browser automatically fall back
-         to the OGG mirror if the MP3 one stalls (handy because Chrome can
-         occasionally choke on chunked-encoded Icecast MP3 streams). -->
+    <!-- Audio is proxied through our own origin (/stream.*) — the Go
+         server pulls from Faith FM's Icecast in Australia on the backend,
+         which keeps the browser on a short, same-origin TLS session.
+         Two <source> children let the browser fall back MP3 → OGG. -->
     <audio id="radio" preload="none">
-      <source src="{{.StreamURL}}" type="audio/mpeg">
-      {{if .StreamURLFallback}}<source src="{{.StreamURLFallback}}" type="audio/ogg">{{end}}
+      <source src="/stream.mp3" type="audio/mpeg">
+      {{if .StreamURLFallback}}<source src="/stream.ogg" type="audio/ogg">{{end}}
     </audio>
   </aside>
 
