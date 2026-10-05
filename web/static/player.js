@@ -46,6 +46,25 @@
   // one as needed. If the user is coming back after a long pause, the
   // browser handles the stale buffer internally.
 
+  // Keep direct references to each candidate URL so we can swap manually
+  // if the browser gets stuck on one. The native MP3→OGG fallback via
+  // <source> children only fires at initial load; once a source is
+  // chosen, we have to do the switch ourselves.
+  const mp3Src = audio.getAttribute("data-src-mp3") || "";
+  const oggSrc = audio.getAttribute("data-src-ogg") || "";
+  let currentSrc = mp3Src;
+
+  function switchSource(nextSrc) {
+    if (!nextSrc || nextSrc === currentSrc) return false;
+    console.info("switching audio source →", nextSrc);
+    currentSrc = nextSrc;
+    audio.src = nextSrc;
+    audio.load();
+    const p = audio.play();
+    if (p && typeof p.catch === "function") p.catch(() => {});
+    return true;
+  }
+
   let bufferTimer = null;
   const clearBufferTimer = () => {
     if (bufferTimer) { clearTimeout(bufferTimer); bufferTimer = null; }
@@ -58,7 +77,13 @@
       if (p && typeof p.then === "function") {
         p.catch((err) => {
           console.error("playback failed:", err);
-          setStatus("Tap play to retry.", false);
+          // If MP3 was the pick and it refuses, try OGG as a last resort.
+          if (currentSrc === mp3Src && oggSrc) {
+            setStatus("Retrying…", false);
+            switchSource(oggSrc);
+          } else {
+            setStatus("Tap play to retry.", false);
+          }
         });
       }
     } else {
@@ -78,14 +103,20 @@
   });
   audio.addEventListener("waiting", () => {
     setStatus("Buffering…", false);
-    // If buffering drags on past 8 seconds, surface a hint instead of
-    // leaving the user staring at a frozen "Buffering…" label.
+    // If buffering drags on past 10 s, try the alternate source once
+    // before giving up. Covers the "Chrome stuck on chunked MP3" case
+    // described in the player comments.
     clearBufferTimer();
     bufferTimer = setTimeout(() => {
-      if (audio.readyState < 3) {
+      if (audio.readyState >= 3) return; // actually playing now
+      const other = currentSrc === mp3Src ? oggSrc : mp3Src;
+      if (other && other !== currentSrc) {
+        setStatus("Switching stream…", false);
+        switchSource(other);
+      } else {
         setStatus("Stream slow — tap play to retry.", false);
       }
-    }, 8000);
+    }, 10000);
   });
   audio.addEventListener("error", () => {
     clearBufferTimer();

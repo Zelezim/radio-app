@@ -120,13 +120,16 @@
       </button>
     </div>
 
-    <!-- Audio is proxied through our own origin (/stream.*) — the Go
-         server pulls from Faith FM's Icecast in Australia on the backend,
-         which keeps the browser on a short, same-origin TLS session.
-         Two <source> children let the browser fall back MP3 → OGG. -->
-    <audio id="radio" preload="none">
-      <source src="/stream.mp3" type="audio/mpeg">
-      {{if .StreamURLFallback}}<source src="/stream.ogg" type="audio/ogg">{{end}}
+    <!-- Audio connects direct from the browser to Faith FM's Icecast.
+         We tried relaying through our Render origin but Icecast's
+         server-side blocklist denies the Render egress IP range (403).
+         The browser's residential IP works fine, so we hand it both
+         <source> URLs and let it fall back MP3 → OGG automatically. -->
+    <audio id="radio" preload="none"
+           data-src-mp3="{{.StreamURL}}"
+           data-src-ogg="{{.StreamURLFallback}}">
+      <source src="{{.StreamURL}}" type="audio/mpeg">
+      {{if .StreamURLFallback}}<source src="{{.StreamURLFallback}}" type="audio/ogg">{{end}}
     </audio>
   </aside>
 
