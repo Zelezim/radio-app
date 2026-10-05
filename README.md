@@ -156,6 +156,27 @@ Protected endpoints are wrapped by `Handlers.RequireAuth` and read the session f
 
 ---
 
+## Keeping the free tiers alive
+
+Both free tiers used here go dormant on their own:
+
+- **Supabase** pauses a project after **7 days** of zero database activity.
+- **Render** sleeps a web service after **15 minutes** of no HTTP traffic (first request after sleep takes ~30-60s to wake up).
+
+For a portfolio demo you want visitors to always find alive, the repo ships with `.github/workflows/keep-alive.yml` — a GitHub Actions cron that runs **daily at 07:43 UTC**, reads one row from Supabase, and pings the Render `/healthz` endpoint.
+
+To enable it, add these to **Settings → Secrets and variables → Actions → New repository secret**:
+
+| Secret | Value | Required |
+|---|---|---|
+| `SUPABASE_URL` | your Supabase project URL (e.g. `https://xxxxx.supabase.co`) | ✅ yes |
+| `SUPABASE_ANON_KEY` | the anon key from Supabase → Project Settings → API | ✅ yes |
+| `RENDER_URL` | your deployed app URL (e.g. `https://radio-app-xxxx.onrender.com`) | optional — skipped if absent |
+
+Trigger a one-off manual run to verify: **Actions tab → "Keep Supabase & Render alive" → "Run workflow"**. Green check means both pings succeeded.
+
+> Note: GitHub disables scheduled workflows automatically if there's no repo activity for **60 days**. If you expect long idle periods, re-enable the workflow in the Actions tab, or occasionally push a tiny commit.
+
 ## Troubleshooting
 
 | Symptom                                          | Likely cause / fix                                                                 |
